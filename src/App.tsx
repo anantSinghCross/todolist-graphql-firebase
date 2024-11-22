@@ -1,49 +1,16 @@
 import {useState} from "react";
 import {TodoItem} from "./components/TodoItem.tsx";
+import {Todo, useTodos} from "./zustore.tsx";
+import {useShallow} from "zustand/react/shallow";
 
-// TODO: 1. Implement Zustand in this project
-// TODO: 2. Integrate CRUD with GraphQL
-
-export interface Todo {
-  id: string
-  description: string
-  completed: boolean
-}
+// TODO: 1. Integrate CRUD with GraphQL
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [newTask, setNewTask] = useState<Todo>({
-    id: '',
-    description: '',
-    completed: false
-  })
-
-  const handleAddTodo = (newTask: Todo) => {
-    const id = Math.trunc(Math.random() * 1000000).toString();
-    setTodos(prevState => [...prevState, {...newTask, id}])
-    setNewTask({id: '', description: '', completed: false});
-  }
-
-  const handleEditTodo = (id: string, description: string) => {
-    setTodos(prevState => {
-      return prevState.map(item => item.id === id ? {...item, description} : item)
-    })
-  }
+  const {todos, addTodo} = useTodos(useShallow((state) => ({todos: state.todos, addTodo: state.addTodo})));
+  const [newTask, setNewTask] = useState<string>('');
 
   const handleNewTodoChange = (description: string) => {
-    setNewTask(prevState => ({...prevState, description: description}))
-  }
-
-  const handleRemoveTodo = (id: string) => {
-    setTodos(prevState => {
-      return prevState.filter((item: Todo) => item.id !== id)
-    })
-  }
-
-  const handleChecked = (id: string) => {
-    setTodos(p => {
-      return p.map(item => item.id===id ? {...item, completed: !item.completed}:item);
-    })
+    setNewTask(description)
   }
 
   return (
@@ -54,9 +21,6 @@ function App() {
             <TodoItem
               key={item.id}
               todo={item}
-              deleteTodo={handleRemoveTodo}
-              toggleCheck={handleChecked}
-              editTodo={handleEditTodo}
             />
           ))
         }
@@ -66,12 +30,12 @@ function App() {
           className='flex-grow p-2 px-3 rounded-s-lg outline-blue-500 shadow-lg shadow-slate-500/10'
           type='text'
           placeholder='Your task...'
-          value={newTask.description}
+          value={newTask}
           onChange={(e) => handleNewTodoChange(e.target.value)}
         />
         <button
           className='bg-blue-600 text-white text-sm font-semibold p-2 px-3 rounded-e-lg shadow-lg shadow-blue-500/50'
-          onClick={() => handleAddTodo(newTask)}
+          onClick={() => addTodo(newTask)}
         >
           Add Task
         </button>

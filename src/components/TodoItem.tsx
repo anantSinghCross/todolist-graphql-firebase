@@ -1,15 +1,15 @@
 import * as React from "react";
-import {Todo} from "../App.tsx";
 import {useState} from "react";
+import {Todo, useTodos} from "../zustore.tsx";
 
 interface TodoItemProps {
   todo: Todo
-  deleteTodo: (id: string) => void
-  toggleCheck: (id: string) => void
-  editTodo: (id: string, description: string) => void
 }
 
-export const TodoItem: React.FC<TodoItemProps> = ({todo, deleteTodo, toggleCheck, editTodo}) => {
+export const TodoItem: React.FC<TodoItemProps> = ({todo}) => {
+  const deleteTodo = useTodos((state) => state.deleteTodo);
+  const editTodo = useTodos((state) => state.editTodo);
+  const toggleCheck = useTodos((state) => state.toggleCheck);
 
   const [editMode, setEditMode] = useState<boolean>(false);
   const [editModeText, setEditModeText] = useState<string>(todo.description);
