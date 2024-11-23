@@ -3,7 +3,7 @@ import {TodoItem} from "./components/TodoItem.tsx";
 import {Todo, useTodos} from "./zustore.tsx";
 import {useShallow} from "zustand/react/shallow";
 
-// TODO: 1. Integrate CRUD with GraphQL
+// TODO: 1. Start with GraphQL server
 
 function App() {
   const {todos, addTodo} = useTodos(useShallow((state) => ({todos: state.todos, addTodo: state.addTodo})));
